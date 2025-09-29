@@ -1,18 +1,20 @@
-import express from 'express'; 
-import { config } from 'dotenv'; 
- 
-import './source/models/__loaddatabase.js'; 
-import router from './source/router.js'; 
+import express from "express";
+import { config } from "dotenv";
 
-config(); 
- 
+import "./source/models/__loaddatabase.js";
+import router from "./source/router.js";
 
-const port = process.env.PORT || 8000; 
+config();
 
-const app = express(); 
-app.set('view engine', 'ejs'); 
-app.set('views', './source/templates'); 
+const port = process.env.PORT || 8000;
 
-app.use('/',router); 
- 
-app.listen(port); 
+const app = express();
+
+app.locals.appTitle = process.env.APPTITLE || "Express";
+
+app.set("view engine", "ejs");
+app.set("views", "./source/templates");
+
+app.use("/", router);
+
+app.listen(port);
