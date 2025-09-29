@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>
+    <%= title %> ::
+    <!-- ............................ 1 -->
+    Список запланированных дел
+  </title>
+</head>
+
+<body>
+
+  <h1>Запланированные дела</h1>
+  <% for (let t of todos) { %>
+  <!-- ...................... 2 -->
+  <h2><a href="/<%= t._id %>/">
+      <%= t.title %>
+    </a></h2>
+  <p>
+    <%= t.desc %>
+  </p>
+  <p>
+    <%= (new Date(t.createdAt)).toLocaleString() %>
+  </p>
+  <p>&nbsp;</p>
+  <% } %>
+</body>
+
+</html>

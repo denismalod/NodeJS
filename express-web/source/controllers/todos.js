@@ -1,30 +1,11 @@
-import { getList, getItem } from '../models/todos.js'; 
+import { getList, getItem } from "../models/todos.js";
 
 export function mainPage(req, res) {
-  const list = getList();
-
-  let s =
-    "<!doctype html>" +
-    "<html>" +
-    "  <head>" +
-    '    <meta charset="UTF-8">' +
-    "    <title>Список запланированных дел</title>" +
-    "  </head>" +
-    "  <body>" +
-    "    <h1>Запланированные дела</h1>";
-  for (let t of list) {
-    const date = new Date(t.createdAt);
-    s +=
-      `    <h2><a href="/${t._id}/">${t.title}</a></h2>` +
-      `    <p>${t.desc}</p>` +
-      `    <p>${date.toLocaleString()}</p>` +
-      "    <p>&nbsp;</p>";
-  }
-
-  s += "  </body>" + "</html>";
-  res.send(s);
+  res.render("main", {
+    todos: getList(),
+    title: "Главная",
+  });
 }
-
 
 export function detailPage(req, res) { 
     const t = getItem(req.params.id); 
@@ -34,20 +15,10 @@ export function detailPage(req, res) {
         return; 
     } 
  
-    const date = new Date(t.createdAt); 
-    res.send('<!doctype html>' + 
-             '<html>' + 
-             '  <head>' + 
-             '    <meta charset="UTF-8">' + 
-             `    <title>${t.title} :: Список запланированных ` + 
-                         'дел</title>' + 
-             '  </head>' + 
-             '  <body>' + 
-             `    <h1>${t.title}</h1>` + 
-             `    <p>${t.desc}</p>` + 
-             `    <p>Создано: ${date.toLocaleString()}</p>` + 
-             '  </body>' + 
-             '</html>'); 
+     res.render('detail', { 
+        todo: t, 
+        title: t.title 
+    }); 
 } 
  
 function errorPage(req, res) { 
