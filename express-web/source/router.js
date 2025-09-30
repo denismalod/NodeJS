@@ -1,4 +1,5 @@
-import { Router, urlencoded } from "express";
+import { Router, urlencoded, static as staticMiddleware } 
+       from 'express'; 
 import methodOverride from 'method-override'; 
 import { requestToContext } from './middleware.js'; 
 
@@ -14,6 +15,7 @@ import {
 
 const router = Router();
 
+router.use(staticMiddleware('public')); 
 router.use(urlencoded({ extended: true })); 
 router.use(methodOverride('_method')); 
 
