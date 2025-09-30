@@ -1,5 +1,7 @@
 import { Router, urlencoded } from "express";
 import methodOverride from 'method-override'; 
+import { requestToContext } from './middleware.js'; 
+
 
 import {
   mainPage,
@@ -14,6 +16,8 @@ const router = Router();
 
 router.use(urlencoded({ extended: true })); 
 router.use(methodOverride('_method')); 
+
+router.use(requestToContext); 
 
 
 router.get("/add", addPage);
