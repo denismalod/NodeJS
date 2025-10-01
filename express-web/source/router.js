@@ -1,10 +1,8 @@
-import { Router, urlencoded, static as staticMiddleware } 
-       from 'express'; 
-import methodOverride from 'method-override'; 
-import { requestToContext } from './middleware.js'; 
-import { mainErrorHandler, error500Handler } 
-       from './error-handlers.js'; 
-
+import { Router, urlencoded, static as staticMiddleware } from "express";
+import methodOverride from "method-override";
+import { requestToContext, handleErrors } from "./middleware.js";
+import { mainErrorHandler, error500Handler } from "./error-handlers.js";
+import { todoV } from "./validators.js";
 
 import {
   mainPage,
@@ -13,27 +11,29 @@ import {
   add,
   setDone,
   remove,
+  setOrder,
 } from "./controllers/todos.js";
+
+import cookieParser from "cookie-parser";
 
 const router = Router();
 
-router.use(staticMiddleware('public')); 
-router.use(urlencoded({ extended: true })); 
-router.use(methodOverride('_method')); 
+router.use(staticMiddleware("public"));
+router.use(urlencoded({ extended: true }));
+router.use(cookieParser());
+router.use(methodOverride("_method"));
 
-router.use(requestToContext); 
-
-
-
+router.use(requestToContext);
 
 router.get("/add", addPage);
-router.post("/add", add);
+router.post("/add", todoV, handleErrors, add);
 
 router.get("/:id", detailPage);
 router.put("/:id", setDone);
 router.delete("/:id", remove);
+router.post('/setorder', setOrder);
 router.get("/", mainPage);
 
-router.use(mainErrorHandler, error500Handler); 
+router.use(mainErrorHandler, error500Handler);
 
 export default router;

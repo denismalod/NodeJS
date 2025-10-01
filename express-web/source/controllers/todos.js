@@ -9,6 +9,19 @@ import createError from "http-errors";
 
 export function mainPage(req, res) {
   let list = getList();
+  if (req.cookies.doneAtLast === "1") {
+    list = [...list];
+    list.sort((el1, el2) => {
+      const date1 = new Date(el1.createdAt);
+      const date2 = new Date(el2.createdAt);
+      const done1 = el1.done || false;
+      const done2 = el2.done || false;
+      const doneDiff = done1 - done2;
+      if (doneDiff != 0) return doneDiff;
+      else return date1 - date2;
+    });
+  }
+
   if (req.query.search) {
     const q = req.query.search.toLowerCase();
     list = list.filter((el) => {
@@ -60,4 +73,9 @@ export function setDone(req, res) {
 export function remove(req, res) {
   if (deleteItem(req.params.id)) res.redirect("/");
   else throw createError(404, "Запрошенное дело не существует");
+}
+
+export function setOrder(req, res) {
+  res.cookie("doneAtLast", req.body.done_at_last);
+  res.redirect("/");
 }

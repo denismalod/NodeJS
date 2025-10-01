@@ -1,10 +1,20 @@
 <%- include('includes/header.ejs') %>
- <form method="get" class="horizontal"> 
+<form method="get" class="horizontal">
   <input name="search" value="<%= req.query.search %>">
   <input type="submit" value="Найти">
 </form>
+<form action="/setorder" method="post" class="horizontal">
+  <% if (req.cookies.doneAtLast == '1') { %>
+  <input type="hidden" name="done_at_last" value="0">
+  <input type="submit" value="Вывести все дела вместе">
+  <% } else { %>
+  <input type="hidden" name="done_at_last" value="1">
+  <input type="submit" value="Вывести выполненные дела в конце">
+  <% } %>
+</form>
 
- <h1 class="heading">Запланированные дела</h1> 
+
+<h1 class="heading">Запланированные дела</h1>
 
 <% for (let t of todos) { %>
 <article class="card">
@@ -22,16 +32,14 @@
     <p><%= t.desc %></p>
     <% } %>
     <p class='datetime'><%= (new Date(t.createdAt)).toLocaleString() %></p>
-     <div class="horizontal"> 
-      
+    <div class="horizontal">
+
       <% if(!t.done) { %>
-       <form action="/<%= t._id %>?_method=PUT" 
-                          method="post"> 
+      <form action="/<%= t._id %>?_method=PUT" method="post">
         <input type="submit" class="success" value="Сделано!">
       </form>
       <% } %>
-       <form action="/<%= t._id %>?_method=DELETE" 
-                          method="post"> 
+      <form action="/<%= t._id %>?_method=DELETE" method="post">
         <input type="submit" class="warning" value="Удалить">
       </form>
     </div>
