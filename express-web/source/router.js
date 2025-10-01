@@ -2,6 +2,8 @@ import { Router, urlencoded, static as staticMiddleware }
        from 'express'; 
 import methodOverride from 'method-override'; 
 import { requestToContext } from './middleware.js'; 
+import { mainErrorHandler, error500Handler } 
+       from './error-handlers.js'; 
 
 
 import {
@@ -22,6 +24,8 @@ router.use(methodOverride('_method'));
 router.use(requestToContext); 
 
 
+
+
 router.get("/add", addPage);
 router.post("/add", add);
 
@@ -29,5 +33,7 @@ router.get("/:id", detailPage);
 router.put("/:id", setDone);
 router.delete("/:id", remove);
 router.get("/", mainPage);
+
+router.use(mainErrorHandler, error500Handler); 
 
 export default router;
