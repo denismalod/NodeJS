@@ -8,15 +8,8 @@ import { requestToContext, handleErrors, extendFlashAPI,
 import { mainErrorHandler, error500Handler } from "./error-handlers.js";
 import { todoV } from "./validators.js";
 
-import {
-  mainPage,
-  detailPage,
-  addPage,
-  add,
-  setDone,
-  remove,
-  setOrder,
-} from "./controllers/todos.js";
+import { mainPage, detailPage, addPage, add, setDone, remove, 
+       setOrder, addendumWrapper } from './controllers/todos.js';
 
 import cookieParser from "cookie-parser";
 
@@ -24,6 +17,7 @@ const FileStore = _FileStore(session);
 
 const router = Router();
 
+router.use('/uploaded', staticMiddleware('storage/uploaded'));
 router.use(staticMiddleware("public"));
 router.use(urlencoded({ extended: true }));
 router.use(cookieParser());
@@ -53,7 +47,7 @@ router.use(requestToContext);
 
 router.get('/add', getErrors, addPage); 
 
-router.post("/add", todoV, handleErrors, add);
+router.post('/add', addendumWrapper, todoV, handleErrors, add); 
 
 router.get("/:id", detailPage);
 router.put("/:id", setDone);
