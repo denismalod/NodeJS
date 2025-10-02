@@ -1,6 +1,10 @@
+import session from 'express-session'; 
+import _FileStore from 'session-file-store'; 
+import { flash } from 'express-flash-message'; 
 import { Router, urlencoded, static as staticMiddleware } from "express";
 import methodOverride from "method-override";
-import { requestToContext, handleErrors } from "./middleware.js";
+import { requestToContext, handleErrors, extendFlashAPI, 
+         getErrors } from './middleware.js'; 
 import { mainErrorHandler, error500Handler } from "./error-handlers.js";
 import { todoV } from "./validators.js";
 
@@ -16,16 +20,39 @@ import {
 
 import cookieParser from "cookie-parser";
 
+const FileStore = _FileStore(session); 
+
 const router = Router();
 
 router.use(staticMiddleware("public"));
 router.use(urlencoded({ extended: true }));
 router.use(cookieParser());
+router.use(session({ 
+    store: new FileStore({ 
+        path: './storage/sessions', 
+        reapAsync: true, 
+        reapSyncFallback: true, 
+        fallbackSessionFn: () => { 
+            return {}; 
+        }, 
+        logFn: () => {} 
+    }), 
+    secret: 'abcdefgh', 
+    resave: false, 
+    saveUninitialized: false, 
+    cookie: { 
+        maxAge: 1000 * 60 * 60 
+    } 
+})); 
+router.use(flash({ sessionKeyName: 'flash-message' })); 
+router.use(extendFlashAPI); 
+
 router.use(methodOverride("_method"));
 
 router.use(requestToContext);
 
-router.get("/add", addPage);
+router.get('/add', getErrors, addPage); 
+
 router.post("/add", todoV, handleErrors, add);
 
 router.get("/:id", detailPage);
