@@ -4,14 +4,13 @@ import { flash } from 'express-flash-message';
 import { Router, urlencoded, static as staticMiddleware } from "express";
 import methodOverride from "method-override";
 import { requestToContext, handleErrors, extendFlashAPI, 
-         getErrors } from './middleware.js'; 
+        getErrors, loadCurrentUser, isGuest } from './middleware.js';   
 import { mainErrorHandler, error500Handler } from "./error-handlers.js";
-import { todoV } from "./validators.js";
-
+import { todoV, registerV } from "./validators.js";
 import { mainPage, detailPage, addPage, add, setDone, remove, 
        setOrder, addendumWrapper } from './controllers/todos.js';
-
 import cookieParser from "cookie-parser";
+import { registerPage, register } from './controllers/users.js';
 
 const FileStore = _FileStore(session); 
 
@@ -40,10 +39,14 @@ router.use(session({
 })); 
 router.use(flash({ sessionKeyName: 'flash-message' })); 
 router.use(extendFlashAPI); 
+router.use(loadCurrentUser);
 
 router.use(methodOverride("_method"));
 
 router.use(requestToContext);
+
+router.get('/register', isGuest, getErrors, registerPage); 
+router.post('/register', isGuest, registerV, handleErrors, register); 
 
 router.get('/add', getErrors, addPage); 
 
