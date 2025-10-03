@@ -4,13 +4,16 @@ import { flash } from 'express-flash-message';
 import { Router, urlencoded, static as staticMiddleware } from "express";
 import methodOverride from "method-override";
 import { requestToContext, handleErrors, extendFlashAPI, 
-        getErrors, loadCurrentUser, isGuest } from './middleware.js';   
+        getErrors, loadCurrentUser, isGuest, isLoggedIn } 
+       from './middleware.js';  
 import { mainErrorHandler, error500Handler } from "./error-handlers.js";
-import { todoV, registerV } from "./validators.js";
+import { todoV, registerV, loginV } from './validators.js'; 
 import { mainPage, detailPage, addPage, add, setDone, remove, 
        setOrder, addendumWrapper } from './controllers/todos.js';
 import cookieParser from "cookie-parser";
-import { registerPage, register } from './controllers/users.js';
+import { registerPage, register, loginPage, login, logout } 
+       from './controllers/users.js';
+       
 
 const FileStore = _FileStore(session); 
 
@@ -46,7 +49,14 @@ router.use(methodOverride("_method"));
 router.use(requestToContext);
 
 router.get('/register', isGuest, getErrors, registerPage); 
-router.post('/register', isGuest, registerV, handleErrors, register); 
+router.post('/register', isGuest, registerV, handleErrors, register);
+router.get('/login', isGuest, getErrors, loginPage); 
+router.post('/login', isGuest, loginV, handleErrors, login); 
+
+router.use(isLoggedIn); 
+
+router.post('/logout', logout); 
+
 
 router.get('/add', getErrors, addPage); 
 
