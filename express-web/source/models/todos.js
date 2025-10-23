@@ -1,42 +1,37 @@
-import { database, saveDatabase, getObjectId } 
-       from "./__loaddatabase.js"; 
- 
-const todos = database.todos; 
- 
-export function getList() { 
-    return todos; 
-} 
+import { Todo } from "./__loaddatabase.js";
 
-export function getItem(id) { 
-    return todos.find((el) => el._id === id); 
-} 
+export async function getList(user, doneAtLast, search) {
+    const qTodos = Todo.find({ user: user }); 
+    if (doneAtLast === '1') 
+        qTodos.sort('done createdAt'); 
+    else 
+        qTodos.sort('createdAt'); 
+    if (search) 
+        qTodos.or([ 
+            { title: new RegExp(search, 'i') }, 
+            { desc: new RegExp(search, 'i') } 
+        ]); 
+    return await qTodos; 
+}
 
-export function addItem(todo) { 
-    todo._id = getObjectId(); 
-    todos.push(todo); 
-    saveDatabase(); 
-} 
-function getItemIndex(id) { 
-    return todos.findIndex((el) => el._id === id); 
-} 
- 
-export function setDoneItem(id) { 
-    const index = getItemIndex(id); 
-    if (index > -1) { 
-        todos[index].done = true; 
-        saveDatabase(); 
-        return true; 
-    } else 
-        return false; 
-} 
- 
-export function deleteItem(id) { 
-    const index = getItemIndex(id); 
-    if (index > -1) { 
-        todos.splice(index, 1); 
-        saveDatabase(); 
-        return true; 
-    } else 
-        return false; 
-} 
+export async function getItem(id, user) {
+  return await Todo.findOne({ _id: id, user: user }); 
+}
 
+export async function addItem(todo) {
+  const oTodo = new Todo(todo);
+  await oTodo.save();
+}
+
+export async function setDoneItem(id, user) {
+  const todo = await getItem(id, user);
+  if (todo) {
+    todo.done = true;
+    await todo.save();
+    return true;
+  } else return false;
+}
+
+export async function deleteItem(id, user) {
+  return await Todo.findOneAndDelete({ _id: id, user: user }); 
+}
