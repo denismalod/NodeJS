@@ -9,7 +9,8 @@ import { requestToContext, handleErrors, extendFlashAPI,
 import { mainErrorHandler, error500Handler } from "./error-handlers.js";
 import { todoV, registerV, loginV } from './validators.js'; 
 import { mainPage, detailPage, addPage, add, setDone, remove, 
-       setOrder, addendumWrapper } from './controllers/todos.js';
+         setOrder, addendumWrapper, mostActiveUsers } 
+       from './controllers/todos.js'; 
 import cookieParser from "cookie-parser";
 import { registerPage, register, loginPage, login, logout } 
        from './controllers/users.js';
@@ -54,6 +55,8 @@ router.get('/login', isGuest, getErrors, loginPage);
 router.post('/login', isGuest, loginV, handleErrors, login); 
 
 router.use(isLoggedIn); 
+
+router.get('/mostactive', mostActiveUsers); 
 
 router.post('/logout', logout); 
 
