@@ -1,5 +1,6 @@
 import { randomBytes } from "node:crypto";
-import { pbkdf2Promisified } from "../utility.js";
+import { pbkdf2Promisified, signPromisified } from '../utility.js';
+
 import { addUser } from "../models/users.js";
 
 export function registerPage(req, res) {
@@ -21,38 +22,14 @@ export async function register(req, res) {
     salt: salt,
   };
   await addUser(user);
-  res.redirect("/login/");
+  res.status(201);
+  res.end();
 }
 
-export function loginPage(req, res) {
-  res.render("login", { title: "Вход" });
-}
 
-export function login(req, res, next) {
-  req.session.regenerate((err) => {
-    if (err) next(err);
-    else {
-      req.session.user = {
-        id: req.__user._id,
-        name: req.__user.username,
-      };
-      req.session.save((err) => {
-        if (err) next(err);
-        else res.redirect("/");
-      });
-    }
-  });
-}
-
-export function logout(req, res, next) {
-  delete req.session.user;
-  req.session.save((err) => {
-    if (err) next(err);
-    else {
-      req.session.regenerate((err) => {
-        if (err) next(err);
-        else res.redirect("/login");
-      });
-    }
-  });
+export async function login(req, res) {
+ const secret = process.env.SECRETKEY; 
+    const token = await signPromisified({ name: req.__user.username }, 
+                                        secret); 
+    res.json({ token: token }); 
 }
