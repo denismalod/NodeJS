@@ -4,6 +4,7 @@ import { config } from "dotenv";
 import { connectToDB } from './source/models/__loaddatabase.js'; 
 
 import router from "./source/router.js";
+import { logRequests } from "./source/middleware.js";
 
 config();
 
@@ -13,11 +14,10 @@ const app = express();
 
 app.locals.appTitle = process.env.APPTITLE || "Express";
 
-app.set("view engine", "ejs");
-app.set("views", "./source/templates");
 
 (async () => { 
     await connectToDB(); 
+    app.use(logRequests); // Добавляем промежуточное ПО для логирования
     app.use('/', router); 
     app.listen(port); 
-})(); 
+})();
