@@ -46,8 +46,7 @@ export function isGuest(req, res, next) {
     res.status(403);
     res.end();
   } else {
-    res.status(401);
-    res.end()
+    next();
   }
 
 }
