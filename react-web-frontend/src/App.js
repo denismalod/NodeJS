@@ -1,8 +1,7 @@
-import logo from "./logo.svg";
-import "./App.css";
+import TodoList from './TodoList.js'; 
 
 function App() {
-  const token = " . . . Электронный жетон . . . ";
+  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJpYXQiOjE3NjE1Njk1MzJ9.Xzv0rNyzortp8Tq1M73Ok9HEq8Ezy9ZH7Zq4f9gAY-M";
   return (
     <>
       <nav>
