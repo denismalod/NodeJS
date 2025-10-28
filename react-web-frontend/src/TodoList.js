@@ -1,19 +1,25 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { baseURL } from "./utility.js";
 import TodoItem from "./TodoItem.js";
 import TodoSearch from "./TodoSearch.js";
 import TodoSort from "./TodoSort.js";
+import { TokenContext, RefreshListContext } from "./utility.js";
 
-export default function TodoList({ token }) {
+export default function TodoList() {
   const [todos, setTodos] = useState([]);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("0");
+  const [refresh, setRefresh] = useState(false);
+  const token = useContext(TokenContext);
 
   function acceptSearch(searchWord) {
     setSearch(searchWord);
   }
   function acceptSort(sortOrder) {
     setSort(sortOrder);
+  }
+  function refreshList() {
+    setRefresh(!refresh);
   }
 
   useEffect(() => {
@@ -30,7 +36,7 @@ export default function TodoList({ token }) {
       if (response.ok) setTodos((await response.json()).todos);
       else window.alert(response.status + ": " + response.statusText);
     })();
-  }, [token, search, sort]);
+  }, [token, search, sort, refresh]);
 
   return (
     <>
@@ -38,9 +44,11 @@ export default function TodoList({ token }) {
       <TodoSort sort={sort} acceptSort={acceptSort} />
 
       <h1 className="heading">Запланированные дела</h1>
-      {todos.map((item) => (
-        <TodoItem key={item._id} item={item} />
-      ))}
+      <RefreshListContext.Provider value={refreshList}>
+        {todos.map((item) => (
+          <TodoItem key={item._id} item={item} />
+        ))}
+      </RefreshListContext.Provider>
     </>
   );
 }
