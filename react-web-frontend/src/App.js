@@ -1,20 +1,35 @@
-import TodoList from './TodoList.js'; 
+import TodoList from "./TodoList.js";
+import { useState } from "react";
+import Login from "./Login.js";
+import Logout from "./Logout.js";
 
 function App() {
-  const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiYWRtaW4iLCJpYXQiOjE3NjE1Njk1MzJ9.Xzv0rNyzortp8Tq1M73Ok9HEq8Ezy9ZH7Zq4f9gAY-M";
+  const [token, setToken] = useState(undefined);
+
+  function acceptToken(tkn) {
+    setToken(tkn);
+  }
+
   return (
     <>
       <nav>
-        <a href="/" className="brand">
-          <span>Список дел</span>
-        </a>
+        {token && (
+          <a href="/" className="brand">
+            <span>Список дел</span>
+          </a>
+        )}
+    
         <input id="bmenub" type="checkbox" className="show" />
         <label htmlFor="bmenub" className="burger pseudo button">
           &#9776;
         </label>
-        <div className="menu"></div>
+        <div className="menu">
+          {token && <Logout acceptToken={acceptToken} />}
+        </div>
       </nav>
-      <TodoList token={token} />
+      {!token && <Login acceptToken={acceptToken} />}
+      {token && <TodoList token={token} />}
+
       <p className="copyright">Все права принадлежат читателю книги.</p>
     </>
   );
