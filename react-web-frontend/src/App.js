@@ -1,8 +1,10 @@
 import TodoList from "./TodoList.js";
 import { useState } from "react";
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Login from "./Login.js";
 import Logout from "./Logout.js";
 import { TokenContext } from "./utility.js";
+import TodoDetail from './TodoDetail.js'; 
 
 function App() {
   const [token, setToken] = useState(undefined);
@@ -12,12 +14,12 @@ function App() {
   }
 
   return (
-    <>
+    <BrowserRouter> 
       <nav>
         {token && (
-          <a href="/" className="brand">
+           <Link to="/" className="brand"> 
             <span>Список дел</span>
-          </a>
+          </Link> 
         )}
 
         <input id="bmenub" type="checkbox" className="show" />
@@ -28,15 +30,22 @@ function App() {
           {token && <Logout acceptToken={acceptToken} />}
         </div>
       </nav>
-      {!token && <Login acceptToken={acceptToken} />}
-      {token && (
-        <TokenContext.Provider value={token}>
-          <TodoList />
-        </TokenContext.Provider>
-      )}
+      <TokenContext.Provider value={token}>
+              <Routes> 
+                  <Route path="/" element={ 
+                      <TodoList /> 
+                  } /> 
+                  <Route path="/:id" element={ 
+                      <TodoDetail /> 
+                  } /> 
+                  <Route path="/login" element={ 
+                      <Login acceptToken={acceptToken} /> 
+                  } /> 
+              </Routes> 
 
+      </TokenContext.Provider>
       <p className="copyright">Все права принадлежат читателю книги.</p>
-    </>
+    </BrowserRouter> 
   );
 }
 
